@@ -2,6 +2,8 @@ from adapters.broker.rabbit_adapter import RabbitMQAdapter
 from adapters.database.alchemy_adapter import AlchemyAdapter
 from application.config import settings
 from application.processes.consume_process import BrokerProcessManager
+from domain.cart.repositories.read_repository import CartReadRepository
+from domain.cart.repositories.write_repository import CartWriteRepository
 from domain.item.repositories.read_repository import ItemReadRepository
 from domain.item.repositories.write_repository import ItemWriteRepository
 from infrastructure.common.base_entities.singleton import OnlyContainer, Singleton
@@ -39,5 +41,15 @@ class Container(Singleton):
 
     item_read_manager = OnlyContainer(
         ItemReadRepository,
+        session_adapter=alchemy_manager(),
+    )
+
+    cart_write_manager = OnlyContainer(
+        CartWriteRepository,
+        session_adapter=alchemy_manager(),
+    )
+
+    cart_read_manager = OnlyContainer(
+        CartReadRepository,
         session_adapter=alchemy_manager(),
     )

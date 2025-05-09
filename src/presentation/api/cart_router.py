@@ -5,23 +5,23 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi_filter import FilterDepends
 from pydantic import BaseModel
 
-from application.services.item_service import ItemService
-from domain.item.entities.model import ItemFilter, ItemIncomingData, ItemResultData
+from application.services.cart_service import CartService
+from domain.cart.entities.model import CartFilter, CartIncomingData, CartResultData
 from infrastructure.common.interfaces.router_interface import AbstractRouter
 
 
-class ItemRouter(AbstractRouter):
-    api_router = APIRouter(prefix="/item", tags=["Item"])
-    filters: ItemFilter = FilterDepends(ItemFilter)
-    service_client: ItemService = Depends(ItemService)
-    input_model: BaseModel = ItemIncomingData
-    output_model: BaseModel = ItemResultData
+class CartRouter(AbstractRouter):
+    api_router = APIRouter(prefix="/cart", tags=["Cart"])
+    filters: CartFilter = FilterDepends(CartFilter)
+    service_client: CartService = Depends(CartService)
+    input_model: BaseModel = CartIncomingData
+    output_model: BaseModel = CartResultData
 
     @staticmethod
     @api_router.get("/{uuid}", response_model=output_model)
     async def get_object(
         uuid: Union[str, UUID],
-        order_provider: ItemService = service_client,
+        order_provider: CartService = service_client,
     ) -> output_model:
         return await order_provider.get_item(uuid=uuid)
 
@@ -29,7 +29,7 @@ class ItemRouter(AbstractRouter):
     @api_router.get("/", response_model=List[output_model])
     async def get_objects(
         background: BackgroundTasks,
-        order_provider: ItemService = service_client,
+        order_provider: CartService = service_client,
         filters: filters = filters,
     ) -> List[output_model]:
         return await order_provider.get_items(filters=filters)
@@ -38,7 +38,7 @@ class ItemRouter(AbstractRouter):
     @api_router.post("/", response_model=output_model)
     async def create_object(
         data: input_model,
-        order_provider: ItemService = service_client,
+        order_provider: CartService = service_client,
     ) -> output_model:
         return await order_provider.create_item(data=data)
 
@@ -47,7 +47,7 @@ class ItemRouter(AbstractRouter):
     async def update_object(
         uuid: Union[str, UUID],
         data: input_model,
-        order_provider: ItemService = service_client,
+        order_provider: CartService = service_client,
     ) -> output_model:
         return await order_provider.update_item(uuid=uuid, data=data)
 
@@ -55,6 +55,6 @@ class ItemRouter(AbstractRouter):
     @api_router.delete("/{uuid}", response_model=output_model)
     async def delete_object(
         uuid: Union[str, UUID],
-        order_provider: ItemService = service_client,
+        order_provider: CartService = service_client,
     ) -> output_model:
         return await order_provider.delete_item(uuid=uuid)

@@ -1,12 +1,14 @@
 from application.config import settings
 from application.container import Container
 from application.server import ApiServer
+from presentation.api.cart_router import CartRouter
 from presentation.api.item_router import ItemRouter
 
 item_app = ApiServer(
     name=settings.NAME,
     routers=[
         ItemRouter().api_router,
+        CartRouter().api_router,
     ],
     start_callbacks=[
         Container.broker_process_manager().start_broker_process,
