@@ -13,7 +13,7 @@ from infrastructure.database.models import Base
 
 class ReadRepository(AbstractReadRepository):
 
-    def __init__(self, session_adapter: AlchemyAdapter, model: Base) -> None:
+    def __init__(self, session_adapter: AlchemyAdapter, model: type[Base]) -> None:
         self._model = model
         self._session: async_sessionmaker = session_adapter.autocommit_session
 

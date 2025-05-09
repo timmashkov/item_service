@@ -12,7 +12,7 @@ from infrastructure.database.models import Base
 
 class WriteRepository(AbstractWriteRepository):
 
-    def __init__(self, session_adapter: AlchemyAdapter, model: Base) -> None:
+    def __init__(self, session_adapter: AlchemyAdapter, model: type[Base]) -> None:
         self._model = model
         self._session: async_sessionmaker = session_adapter.transactional_session
 

@@ -8,9 +8,8 @@ Create Date: 2025-05-09 17:43:27.763590
 
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "19aff94376e2"
@@ -30,9 +29,7 @@ def upgrade() -> None:
             nullable=False,
             comment="Идентификатор пользователя из user_service",
         ),
-        sa.Column(
-            "uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"
-        ),
+        sa.Column("uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"),
         sa.Column(
             "created_at",
             sa.DateTime(),
@@ -49,9 +46,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("uuid"),
     )
-    op.create_index(
-        op.f("ix_carts_user_uuid"), "carts", ["user_uuid"], unique=False
-    )
+    op.create_index(op.f("ix_carts_user_uuid"), "carts", ["user_uuid"], unique=False)
     op.create_index(op.f("ix_carts_uuid"), "carts", ["uuid"], unique=False)
     op.create_table(
         "items",
@@ -61,27 +56,21 @@ def upgrade() -> None:
             nullable=False,
             comment="Название товара",
         ),
-        sa.Column(
-            "description", sa.Text(), nullable=True, comment="Описание товара"
-        ),
+        sa.Column("description", sa.Text(), nullable=True, comment="Описание товара"),
         sa.Column(
             "price",
             sa.DECIMAL(precision=10, scale=2),
             nullable=False,
             comment="Текущая цена товара",
         ),
-        sa.Column(
-            "category", sa.String(), nullable=False, comment="Категория товара"
-        ),
+        sa.Column("category", sa.String(), nullable=False, comment="Категория товара"),
         sa.Column(
             "is_available",
             sa.Boolean(),
             nullable=False,
             comment="Доступен ли товар для заказа",
         ),
-        sa.Column(
-            "uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"
-        ),
+        sa.Column("uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"),
         sa.Column(
             "created_at",
             sa.DateTime(),
@@ -101,21 +90,15 @@ def upgrade() -> None:
     op.create_index(op.f("ix_items_uuid"), "items", ["uuid"], unique=False)
     op.create_table(
         "cart_items",
-        sa.Column(
-            "cart_id", sa.UUID(), nullable=False, comment="Ссылка на корзину"
-        ),
-        sa.Column(
-            "item_id", sa.UUID(), nullable=False, comment="Ссылка на товар"
-        ),
+        sa.Column("cart_id", sa.UUID(), nullable=False, comment="Ссылка на корзину"),
+        sa.Column("item_id", sa.UUID(), nullable=False, comment="Ссылка на товар"),
         sa.Column(
             "quantity",
             sa.Integer(),
             nullable=False,
             comment="Количество товара",
         ),
-        sa.Column(
-            "uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"
-        ),
+        sa.Column("uuid", sa.UUID(), nullable=False, comment="Уникальный айди записи"),
         sa.Column(
             "created_at",
             sa.DateTime(),
@@ -130,9 +113,7 @@ def upgrade() -> None:
             nullable=False,
             comment="Дата обновления",
         ),
-        sa.ForeignKeyConstraint(
-            ["cart_id"], ["carts.uuid"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["cart_id"], ["carts.uuid"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(
             ["item_id"],
             ["items.uuid"],
@@ -146,9 +127,7 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_cart_items_item_id"), "cart_items", ["item_id"], unique=False
     )
-    op.create_index(
-        op.f("ix_cart_items_uuid"), "cart_items", ["uuid"], unique=False
-    )
+    op.create_index(op.f("ix_cart_items_uuid"), "cart_items", ["uuid"], unique=False)
     # ### end Alembic commands ###
 
 

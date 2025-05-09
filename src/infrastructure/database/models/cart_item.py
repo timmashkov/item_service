@@ -1,8 +1,9 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import TYPE_CHECKING
+
 from infrastructure.database.models import Base
 
 if TYPE_CHECKING:
@@ -18,22 +19,14 @@ class CartItem(Base):
 
     cart_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("carts.uuid", ondelete="CASCADE"),
-        nullable=False, index=True,
-        comment="Ссылка на корзину"
+        nullable=False,
+        index=True,
+        comment="Ссылка на корзину",
     )
     item_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("items.uuid"),
-        nullable=False, index=True,
-        comment="Ссылка на товар"
+        ForeignKey("items.uuid"), nullable=False, index=True, comment="Ссылка на товар"
     )
-    quantity: Mapped[int] = mapped_column(
-        default=1,
-        comment="Количество товара"
-    )
+    quantity: Mapped[int] = mapped_column(default=1, comment="Количество товара")
 
-    cart: Mapped["Cart"] = relationship(
-        back_populates="items"
-    )
-    item: Mapped["Item"] = relationship(
-        back_populates="cart_items"
-    )
+    cart: Mapped["Cart"] = relationship(back_populates="items")
+    item: Mapped["Item"] = relationship(back_populates="cart_items")

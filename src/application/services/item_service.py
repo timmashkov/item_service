@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import Depends
 
 from application.container import Container
-from domain.order.entities.model import OrderIncomingData
+from domain.item.entities.model import ItemIncomingData
 from infrastructure.common.base_entities.singleton import Singleton
 from infrastructure.common.interfaces.repository_interfaces import (
     AbstractReadRepository,
@@ -12,12 +12,12 @@ from infrastructure.common.interfaces.repository_interfaces import (
 )
 
 
-class OrderService(Singleton):
+class ItemService(Singleton):
     def __init__(
         self,
-        read_repository: AbstractReadRepository = Depends(Container.order_read_manager),
+        read_repository: AbstractReadRepository = Depends(Container.item_read_manager),
         write_repository: AbstractWriteRepository = Depends(
-            Container.order_write_manager
+            Container.item_write_manager
         ),
     ) -> None:
         self.read_repository = read_repository
@@ -29,10 +29,10 @@ class OrderService(Singleton):
     async def get_items(self, filters: Any = None):
         return await self.read_repository.find(filters=filters)
 
-    async def create_item(self, data: OrderIncomingData):
+    async def create_item(self, data: ItemIncomingData):
         return await self.write_repository.create_item(**data.model_dump())
 
-    async def update_item(self, uuid: Union[str, UUID], data: OrderIncomingData):
+    async def update_item(self, uuid: Union[str, UUID], data: ItemIncomingData):
         intel = data.model_dump()
         intel["uuid"] = uuid
         return await self.write_repository.update_item(**intel)

@@ -1,6 +1,6 @@
 import uuid
+from typing import TYPE_CHECKING, List
 
-from typing import List, TYPE_CHECKING
 from sqlalchemy import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -13,11 +13,12 @@ if TYPE_CHECKING:
 class Cart(Base):
 
     user_uuid: Mapped[uuid.UUID] = mapped_column(
-        UUID, nullable=False, index=True,
-        comment="Идентификатор пользователя из user_service"
+        UUID,
+        nullable=False,
+        index=True,
+        comment="Идентификатор пользователя из user_service",
     )
 
     items: Mapped[List["CartItem"]] = relationship(
-        back_populates="cart",
-        cascade="all, delete-orphan"
+        back_populates="cart", cascade="all, delete-orphan"
     )
