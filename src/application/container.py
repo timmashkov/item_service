@@ -2,6 +2,7 @@ from adapters.broker.rabbit_adapter import RabbitMQAdapter
 from adapters.database.alchemy_adapter import AlchemyAdapter
 from application.config import settings
 from application.processes.consume_process import BrokerProcessManager
+from application.services.user_service import UserHTTPService
 from domain.cart.repositories.read_repository import CartReadRepository
 from domain.cart.repositories.write_repository import CartWriteRepository
 from domain.item.repositories.read_repository import ItemReadRepository
@@ -32,6 +33,12 @@ class Container(Singleton):
         BrokerProcessManager,
         broker=rabbit_manager(),
         queues=settings.RABBIT_ROUTING_KEYS,
+    )
+
+    user_http_service = OnlyContainer(
+        UserHTTPService,
+        prefix=settings.USER_SERVICE.prefix,
+        port=settings.USER_SERVICE.port,
     )
 
     item_write_manager = OnlyContainer(

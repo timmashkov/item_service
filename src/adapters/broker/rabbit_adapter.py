@@ -3,7 +3,7 @@ import logging
 from typing import Any, Callable, List, Optional, Union
 
 from aio_pika import Message, RobustConnection, connect_robust
-from aio_pika.abc import AbstractChannel
+from aio_pika.abc import AbstractChannel, AbstractQueue
 from yarl import URL
 
 from infrastructure.common.interfaces.broker_interface import AbstractBroker
@@ -23,7 +23,7 @@ class RabbitMQAdapter(AbstractBroker):
         logger: Optional[logging.Logger] = None,
     ) -> None:
         self.connection: Optional[RobustConnection] = None
-        self.queues: dict = {}
+        self.queues: dict[str, AbstractQueue] = {}
         self.queue_list: list = queue_list if queue_list else []
         self.channel: Optional[AbstractChannel] = None
 
@@ -60,8 +60,10 @@ class RabbitMQAdapter(AbstractBroker):
 
     async def init_queues(self, **kwargs):
         if self.connection and self.channel:
-            for routing_key in self.queue_list:
-                await self.channel.declare_queue(name=routing_key, **kwargs)
+            for key, routing_key in self.queue_list.items():
+                self.queues[routing_key] = await self.channel.declare_queue(
+                    name=routing_key, **kwargs
+                )
             self.logger.info("Queues has been created")
         else:
             raise ConnectionError("Error while creating queues")
@@ -98,11 +100,9 @@ class RabbitMQAdapter(AbstractBroker):
             self.logger.error("Error while sending message")
 
     async def get_message(self, routing_key: str) -> Any:
-        while True:
-            message = await self.queues[routing_key].get(
-                timeout=self.timeout, fail=False
-            )
-            if message:
-                await message.ack()
-                return message
-            await asyncio.sleep(0.01)
+        # while True:
+        message = await self.queues[routing_key].get(timeout=self.timeout, fail=False)
+        if message:
+            await message.ack()
+            return message
+        # await asyncio.sleep(0.01)
